@@ -109,19 +109,11 @@
                 <ul class="u-nav u-spacing-2 u-unstyled u-nav-1">
                     <li class="u-nav-item"><a
                             class="u-border-2 u-border-active-grey-90 u-border-hover-grey-50 u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                            href="Home.html" style="padding: 10px 20px;">Home</a>
+                            href="/home" style="padding: 10px 20px;">Home</a>
                     </li>
                     <li class="u-nav-item"><a
                             class="u-border-2 u-border-active-grey-90 u-border-hover-grey-50 u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                            href="Sign-up.html" style="padding: 10px 20px;">Sign up</a>
-                    </li>
-                    <li class="u-nav-item"><a
-                            class="u-border-2 u-border-active-grey-90 u-border-hover-grey-50 u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                            href="Log-in.html" style="padding: 10px 20px;">Log in</a>
-                    </li>
-                    <li class="u-nav-item"><a
-                            class="u-border-2 u-border-active-grey-90 u-border-hover-grey-50 u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                            href="User.html" style="padding: 10px 20px;">User</a>
+                            href="/reviews" style="padding: 10px 20px;">Reviews</a>
                     </li>
                 </ul>
             </div>
@@ -131,11 +123,8 @@
                         <div class="u-menu-close"></div>
                         <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
                             <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Home.html">Home</a></li>
-                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Sign-up.html">Sign up</a>
-                            </li>
-                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Log-in.html">Log in</a>
-                            </li>
-                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="User.html">User</a></li>
+
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="User.html">Reviews</a></li>
                         </ul>
                     </div>
                 </div>
@@ -195,6 +184,7 @@
                                                 <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-5 color-for-information" th:text="'Contact: '+${winery.getTelephoneNumbers()}"></p>
                                                 <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Working Hours: '+${winery.getWorkingHours()}"></p>
                                                 <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Categories: '+${winery.getCategory()}"></p>
+                                                <a class="addReview" th:href="@{'/reviews/add-form/{id}' (id=${winery.getId()})}">Add review</a>
                                             </button>
                                         </div>
                                     </div>
@@ -206,7 +196,9 @@
                                                 <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-5 color-for-information" th:text="'Contact: '+${winery.getTelephoneNumbers()}"></p>
                                                 <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Working Hours: '+${winery.getWorkingHours()}"></p>
                                                 <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Categories: '+${winery.getCategory()}"></p>
+                                                <a class="addReview" th:href="@{'/reviews/add-form/{id}' (id=${winery.getId()})}">Add review</a>
                                             </button>
+
                                         </div>
                                     </div>
                                     <div class="wineries" th:if="${hasError}">
