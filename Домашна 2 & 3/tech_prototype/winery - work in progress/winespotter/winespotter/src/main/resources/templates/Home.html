@@ -15,41 +15,57 @@
     <script class="u-script" type="text/javascript" th:src="@{/js/nicepage.js}" src="" defer=""></script>
     <meta name="generator" content="Nicepage 6.0.3, nicepage.com">
     <meta name="referrer" content="origin">
-    <link id="u-theme-google-font" rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
-    <link id="u-page-google-font" rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i|Lobster:400|Aboreto:400">
+<!--    <link id="u-theme-google-font" rel="stylesheet"-->
+<!--          href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">-->
+<!--    <link id="u-page-google-font" rel="stylesheet"-->
+<!--          href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i|Lobster:400|Aboreto:400">-->
 
 
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCterejpydbpS1_sVTj5IQkX8r61uq2loU&callback=initMap"></script>
+<!--    <script async defer-->
+<!--            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCterejpydbpS1_sVTj5IQkX8r61uq2loU&callback=initMap"></script>-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="">
+    </script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="">
+    </script>
+
+    <link rel="stylesheet" href="https://unpkg.com/lrm@1.7.1/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/lrm@1.7.1/dist/leaflet-routing-machine.js"></script>
+
+
+
+
     <style>
         #wineryMap {
             height: 400px;
         }
     </style>
-    <script th:inline="javascript">
-        /* Thymeleaf inline script to pass data from Thymeleaf to JavaScript */
-        var wineryData = /*[[${wineriesSearch}]]*/ [];
-    </script>
+
     <script>
 
         var map;
 
         function initMap() {
             // Initialize map centered at default coordinates for Macedonia
-            map = new google.maps.Map(document.getElementById('wineryMap'), {
-                center: {lat: 39.5, lng: 21.7453}, // Default coordinates (center of Macedonia)
-                zoom: 8,
-            });
+            map = L.map('wineryMap').setView([39.5, 21.7453], 8);
 
-            // Function to add a marker to the ma
-
-            // addMarker(41.12809029, 20.79250737, "Winery Ohrid");
-            // addMarker(42.00384842, 21.92826742, "Zik Gradiste");
-
-            // Example: Add a marker for a winery (replace with your data)
-            //addMarker(42.11047208, 21.75025841, 'Example Winery');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
         }
 
         function addMarker(button) {
@@ -57,11 +73,29 @@
             var longitude = button.getAttribute("data-longitude");
             var wineryName = button.getAttribute("data-name");
 
-            var marker = new google.maps.Marker({
-                position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-                map: map,
-                title: wineryName,
-            });
+            var marker = L.marker([parseFloat(latitude), parseFloat(longitude)]).addTo(map);
+
+            var circle = L.circle([parseFloat(latitude), parseFloat(longitude)], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 500
+            }).addTo(map);
+
+            var coordinates = [
+                [parseFloat(latitude), parseFloat(longitude)],
+                // Add more coordinates as needed
+            ];
+
+            var polygon = L.polygon(coordinates).addTo(map);
+
+            var control = L.Routing.control({
+                waypoints: [
+                    L.latLng(42.11047208, 21.92826742),
+                    L.latLng(parseFloat(latitude), parseFloat(longitude))
+                ],
+                routeWhileDragging: true
+            }).addTo(map);
         }
 
 
@@ -156,6 +190,10 @@
                                               class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form"
                                               source="email" name="form" style="padding: 10px;">
                                             <div class="u-form-email u-form-group">
+                                                <select name="search" class="u-form-email u-form-group" required style="color:black; font-weight: bold;">
+                                                    <option value="name">Search by name</option>
+                                                    <option value="city">Search by city</option>
+                                                </select>
                                                 <label for="email-3ad8" class="u-form-control-hidden u-label"></label>
                                                 <input type="text" placeholder="Enter a winery" id="email-3ad8"
                                                        name="winery" class="u-input u-input-rectangle" required="">
