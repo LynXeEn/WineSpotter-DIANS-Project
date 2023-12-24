@@ -32,13 +32,20 @@ public class WineryController {
     }
 
     @PostMapping
-    String getSearch(@RequestParam String winery, Model model){
-        List<Winery> wineries = wineryService.findByNameContains(winery);
-        if(!wineries.isEmpty()){
-            model.addAttribute("wineriesSearch",wineries);
+    String getSearch(@RequestParam String winery,@RequestParam String search, Model model){
+        List<Winery> wineriesByName = wineryService.findByNameContains(winery);
+        List<Winery> wineriesByCity = wineryService.findByCitiesContains(winery);
+        if(!wineriesByName.isEmpty() && search.equals("name")){
+            model.addAttribute("wineriesSearch",wineriesByName);
             return "Home";
         }
-        return "redirect:/home?error=Winery+Not+Found";
+        else if(!wineriesByCity.isEmpty() && search.equals("city")){
+            model.addAttribute("wineriesSearch",wineriesByCity);
+            return "Home";
+        }
+        else{
+            return "redirect:/home?error=Winery+Not+Found";
+        }
     }
 
 

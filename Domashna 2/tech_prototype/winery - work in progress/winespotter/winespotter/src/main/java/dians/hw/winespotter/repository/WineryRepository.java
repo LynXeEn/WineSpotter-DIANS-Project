@@ -11,4 +11,5 @@ public interface WineryRepository extends JpaRepository<Winery,Long> {
     List<Winery> findByName(String name);
     Streamable<Winery> findByNameContaining(String name);
     List<Winery> findByNameContainsIgnoreCase(String name);
+    List<Winery> findByCitiesContainsIgnoreCase(String city);
 }
