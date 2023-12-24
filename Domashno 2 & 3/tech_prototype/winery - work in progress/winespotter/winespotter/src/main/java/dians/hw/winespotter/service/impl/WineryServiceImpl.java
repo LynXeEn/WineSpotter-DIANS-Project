@@ -25,7 +25,14 @@ public class WineryServiceImpl implements WineryService {
         return wineryRepository.findById(id).get();
     }
 
+    @Override
     public List<Winery> findByNameContains(String name) {
         return wineryRepository.findByNameContainsIgnoreCase(name);
     }
+
+    @Override
+    public List<Winery> findByCitiesContains(String city) {
+        return wineryRepository.findByCitiesContainsIgnoreCase(city);
+    }
+
 }

@@ -9,5 +9,6 @@ public interface WineryService {
     Winery findByID(Long id);
     List<Winery> findByNameContains(String name);
 
+    List<Winery> findByCitiesContains(String city);
 
 }
