@@ -15,7 +15,16 @@
     <script class="u-script" type="text/javascript" th:src="@{/js/nicepage.js}" src="" defer=""></script>
     <meta name="generator" content="Nicepage 6.0.3, nicepage.com">
     <meta name="referrer" content="origin">
-<!--    <link id="u-theme-google-font" rel="stylesheet"-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <!--    <link id="u-theme-google-font" rel="stylesheet"-->
 <!--          href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">-->
 <!--    <link id="u-page-google-font" rel="stylesheet"-->
 <!--          href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i|Lobster:400|Aboreto:400">-->
@@ -110,6 +119,37 @@
             } else {
                 console.error("Invalid coordinates for zooming.");
             }
+
+            if (isNaN(latitude) || isNaN(longitude)) {
+                console.error("Invalid coordinates.");
+                return;
+            }
+
+            // Create a routing control
+            var control = L.Routing.control({
+                waypoints: [
+                    L.latLng(42.00541940564472, 21.410406238933493),
+                    L.latLng(latitude, longitude)
+                ],
+                routeWhileDragging: true
+            });
+
+            // Add the geocoder control for better waypoint handling
+            var geocoder = L.Control.geocoder({
+                collapsed: false,
+                defaultMarkGeocode: false
+            }).on('markgeocode', function (e) {
+                var bbox = e.geocode.bbox;
+                var padding = [bbox[0][0] - 1, bbox[0][1] - 1];
+                map.fitBounds(L.latLngBounds(bbox), { padding: padding });
+            });
+
+            // Add both controls to the map
+            map.addControl(control);
+            map.addControl(geocoder);
+
+            // Trigger route calculation
+            control.route();
         }
 
         function zoomOut() {

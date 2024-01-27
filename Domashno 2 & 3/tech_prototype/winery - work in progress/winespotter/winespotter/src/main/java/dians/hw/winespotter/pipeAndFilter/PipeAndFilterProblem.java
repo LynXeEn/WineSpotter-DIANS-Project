@@ -29,11 +29,7 @@ public class PipeAndFilterProblem {
             String resPipe1 = groupedCoursesPipe.runFilters(line);
 
             String[] fields = resPipe1.split(",");
-            if (wineriesByCity.containsKey(fields[2])) {
-                wineriesByCity.put(fields[2], wineriesByCity.get(fields[2]) + 1);
-            } else {
-                wineriesByCity.put(fields[2], 1);
-            }
+            extracted(wineriesByCity, fields);
 
             System.out.println(resPipe1);
 
@@ -45,6 +41,14 @@ public class PipeAndFilterProblem {
             System.out.println(num.getKey() + " -> " + num.getValue());
         }
 
+    }
+
+    private static void extracted(Map<String, Integer> wineriesByCity, String[] fields) {
+        if (wineriesByCity.containsKey(fields[2])) {
+            wineriesByCity.put(fields[2], wineriesByCity.get(fields[2]) + 1);
+        } else {
+            wineriesByCity.put(fields[2], 1);
+        }
     }
 
 }

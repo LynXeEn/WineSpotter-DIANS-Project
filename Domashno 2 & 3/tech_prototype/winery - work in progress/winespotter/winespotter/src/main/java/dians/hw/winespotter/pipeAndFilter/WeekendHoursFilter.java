@@ -16,6 +16,15 @@ public class WeekendHoursFilter implements Filter<String> {
         String workHours = parts[4];
         String[] workParts = workHours.split(";");
 
+        extracted(workParts, partsInput);
+        String result = "";
+        for (String part : partsInput) {
+            result += part + ",";
+        }
+        return result;
+    }
+
+    private static void extracted(String[] workParts, List<String> partsInput) {
         if (workParts[0].equals("Working hours")) {
             partsInput.set(4, "Week Hours");
             partsInput.add(5, "Weekend Hours");
@@ -66,11 +75,6 @@ public class WeekendHoursFilter implements Filter<String> {
             }
 
         }
-        String result = "";
-        for (String part : partsInput) {
-            result += part + ",";
-        }
-        return result;
     }
 }
 

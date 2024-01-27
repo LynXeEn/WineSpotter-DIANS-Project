@@ -7,21 +7,7 @@ public class AddressRefactorFilter implements Filter<String> {
         String address = parts[1];
 
         String[] addParts = address.split("\\s+");
-        if (addParts.length > 1) {
-            if (!(addParts[0].startsWith("Avtopat"))) {
-                if (!(addParts[0].startsWith("ul.") || addParts[0].startsWith("bul.") || addParts[0].startsWith("s."))) {
-                    String temp = "ul.";
-                    temp += addParts[0];
-                    addParts[0] = temp;
-                }
-
-                if (Character.isDigit(addParts[addParts.length - 1].charAt(0))) {
-                    String temp = "br.";
-                    temp += addParts[addParts.length - 1];
-                    addParts[addParts.length - 1] = temp;
-                }
-            }
-        }
+        addingPartsForAdressFilter(addParts);
         String temp = "";
         for (String part : addParts) {
             temp += part + " ";
@@ -37,5 +23,23 @@ public class AddressRefactorFilter implements Filter<String> {
 
         return result;
 
+    }
+
+    private static void addingPartsForAdressFilter(String[] addParts) {
+        if (addParts.length > 1) {
+            if (!(addParts[0].startsWith("Avtopat"))) {
+                if (!(addParts[0].startsWith("ul.") || addParts[0].startsWith("bul.") || addParts[0].startsWith("s."))) {
+                    String temp = "ul.";
+                    temp += addParts[0];
+                    addParts[0] = temp;
+                }
+
+                if (Character.isDigit(addParts[addParts.length - 1].charAt(0))) {
+                    String temp = "br.";
+                    temp += addParts[addParts.length - 1];
+                    addParts[addParts.length - 1] = temp;
+                }
+            }
+        }
     }
 }

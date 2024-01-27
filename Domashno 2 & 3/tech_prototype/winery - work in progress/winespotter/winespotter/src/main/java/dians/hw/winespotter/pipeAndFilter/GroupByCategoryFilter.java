@@ -30,12 +30,7 @@ public class GroupByCategoryFilter implements Filter<String> {
         String[] tmp = input.split(",");
         String[] fields = tmp[6].split(";");
         for (String field : fields) {
-            if (categoryGroups.containsKey(field)) {
-                res.add(categoryGroups.get(field));
-            } else {
-                field = Character.toUpperCase(field.charAt(0)) + field.substring(1, field.length());
-                res.add(field);
-            }
+            extractedMapStringCategory(field, categoryGroups, res);
         }
 
         String result = "";
@@ -51,5 +46,14 @@ public class GroupByCategoryFilter implements Filter<String> {
         }
 
         return result;
+    }
+
+    private static void extractedMapStringCategory(String field, Map<String, String> categoryGroups, Set<String> res) {
+        if (categoryGroups.containsKey(field)) {
+            res.add(categoryGroups.get(field));
+        } else {
+            field = Character.toUpperCase(field.charAt(0)) + field.substring(1, field.length());
+            res.add(field);
+        }
     }
 }
