@@ -64,6 +64,8 @@
     <script>
 
         var map;
+        var defaultView = [39.5, 21.7453]; // Default coordinates for Macedonia
+        var defaultZoom = 8;
 
         function initMap() {
             // Initialize map centered at default coordinates for Macedonia
@@ -74,17 +76,7 @@
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
-            // var purpleIcon = L.divIcon({
-            //     className: 'purple-marker',
-            //     iconSize: [25, 41],
-            //     iconAnchor: [12, 41],
-            //     popupAnchor: [1, -34]
-            // });
-            //
-            // // Add marker with purple icon to the map
-            // var marker = L.marker([42.00541940564472, 21.410406238933493], { icon: purpleIcon }).addTo(map);
-
-            var currentLocationMarker = L.marker([42.00541940564472, 21.410406238933493]).addTo(map);
+             var currentLocationMarker = L.marker([42.00541940564472, 21.410406238933493]).addTo(map);
 
             // Popup for the marker (you can customize the content)
             currentLocationMarker.bindPopup("Current Location").openPopup();
@@ -112,14 +104,6 @@
 
             var polygon = L.polygon(coordinates).addTo(map);
 
-            // var control = L.Routing.control({
-            //     waypoints: [
-            //         L.latLng(42.11047208, 21.92826742),
-            //         L.latLng(parseFloat(latitude), parseFloat(longitude))
-            //     ],
-            //     routeWhileDragging: true
-            // }).addTo(map);
-
             // Zoom to the marker's position
             if (map && !isNaN(latitude) && !isNaN(longitude)) {
                 map.setView([parseFloat(latitude) - 0.074, parseFloat(longitude)], 13);
@@ -128,7 +112,10 @@
             }
         }
 
-
+        function zoomOut() {
+            // Reset map to default view and zoom level
+            map.setView(defaultView, defaultZoom);
+        }
 
     </script>
 
@@ -289,7 +276,7 @@
 
 
                                         </div>
-                                    </div>
+                                        <button style="margin-top: 10px; margin-left: 200px; color: lightblue; background: darkred;width:250px;height: 40px;" id="zoomOutButton" onclick="zoomOut()">Zoom Out</button>                                    </div>
                                 </div>
                             </div>
                         </div>
