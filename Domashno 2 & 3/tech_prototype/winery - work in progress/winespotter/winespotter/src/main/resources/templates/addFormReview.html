@@ -96,11 +96,20 @@
 <section class="u-clearfix u-image u-section-2" id="sec-8eed" data-image-width="300" data-image-height="300">
         <div class="middle-form">
             <form action="/reviews/add" method="POST" class="reviewForm">
-                <div class="form-group">
-                    <input name="wineryName" type="hidden" th:value="${winery.getId()}" th:text="'Winnery name: '+${winery.getName()}">
+                <div class="form-group" style="font-weight: bold;text-align: center">
+                    <input name="wineryName" type="hidden" th:value="${winery.getId()}" th:text="'Winnery name: '+${winery.getName()}" >
+                </div>
+                <hr>
+                <div class="form-group" style="display: none">
+                    <label for="wineryID"></label>
+                    <input type="hidden"
+                           class="form-control"
+                           id="wineryID"
+                           name="wineryID"
+                           th:value="${winery.getId()}">
                 </div>
                 <div class="form-group">
-                    <label for="name">Name</label>
+                    <label for="name" style="font-weight: bold">Name</label>
                     <input type="text"
                            class="form-control"
                            id="name"
@@ -108,20 +117,23 @@
                            placeholder="Enter your name">
                 </div>
                 <div class="form-group">
-                    <label for="grade">Grade</label>
-                    <input type="text"
+                    <label for="grade" style="font-weight: bold">Grade</label>
+                    <input type="number"
                            class="form-control"
                            id="grade"
                            name="grade"
                            placeholder="Enter a grade between 1 and 5">
                 </div>
                 <div class="form-group">
-                    <label for="comment">Comment</label>
+                    <label for="comment" style="font-weight: bold">Comment</label>
                     <input type="text"
                            class="form-control"
                            id="comment"
                            name="comment"
                            placeholder="Enter your comment">
+                </div>
+                <div>
+                    <p th:if="${hasError}" th:text="${errorMessage}" style="text-align: center;color: darkred;font-weight: bold" ></p>
                 </div>
                 <div class="middle-form-buttons">
                     <button id="submit" class="btn middle-form-button" type="submit">Submit</button>

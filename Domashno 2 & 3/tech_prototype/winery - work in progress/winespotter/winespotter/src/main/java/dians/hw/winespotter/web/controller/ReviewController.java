@@ -25,16 +25,24 @@ public class ReviewController {
     }
 
     @GetMapping("add-form/{id}")
-    String addFormForReview(Model model, @PathVariable Long id){
+    String addFormForReview(Model model, @PathVariable Long id, @RequestParam(required = false) String error){
         model.addAttribute("winery",wineryService.findByID(id));
+        if(error != null){
+            model.addAttribute("errorMessage","The grade must be between 1 and 5");
+            model.addAttribute("hasError",true);
+        }
         return "addFormReview";
     }
 
     @PostMapping("add")
-    String addReview(@RequestParam String name,
+    String addReview(@RequestParam Long wineryID,
+                     @RequestParam String name,
                      @RequestParam Integer grade,
                      @RequestParam String comment,
                      @RequestParam Long wineryName){
+        if(grade < 1 || grade > 5){
+            return "redirect:/reviews/add-form/"+wineryID+"?error=hasError";
+        }
         this.reviewService.save(name,grade,comment,wineryName);
         return "redirect:/home";
     }
