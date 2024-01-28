@@ -23,46 +23,23 @@
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <!--    <link id="u-theme-google-font" rel="stylesheet"-->
-<!--          href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">-->
-<!--    <link id="u-page-google-font" rel="stylesheet"-->
-<!--          href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i|Lobster:400|Aboreto:400">-->
+    <!-- Leaflet Routing Machine CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
-
-<!--    <script async defer-->
-<!--            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCterejpydbpS1_sVTj5IQkX8r61uq2loU&callback=initMap"></script>-->
-
-    <style>
-        .purple-marker {
-            background-color: purple;
-            border-radius: 50%;
-        }
-    </style>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin="">
-    </script>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin="">
-    </script>
-
-    <link rel="stylesheet" href="https://unpkg.com/lrm@1.7.1/dist/leaflet-routing-machine.css" />
-    <script src="https://unpkg.com/lrm@1.7.1/dist/leaflet-routing-machine.js"></script>
+    <!-- Leaflet Control Geocoder CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <style>
         #wineryMap {
@@ -75,6 +52,7 @@
         var map;
         var defaultView = [39.5, 21.7453]; // Default coordinates for Macedonia
         var defaultZoom = 8;
+        var routingControl;
 
         function initMap() {
             // Initialize map centered at default coordinates for Macedonia
@@ -89,6 +67,7 @@
 
             // Popup for the marker (you can customize the content)
             currentLocationMarker.bindPopup("Current Location").openPopup();
+
 
         }
 
@@ -113,49 +92,48 @@
 
             var polygon = L.polygon(coordinates).addTo(map);
 
-            // Zoom to the marker's position
+
+
+            // Zoom to the marker's position with a smooth transition
             if (map && !isNaN(latitude) && !isNaN(longitude)) {
                 map.setView([parseFloat(latitude) - 0.074, parseFloat(longitude)], 13);
             } else {
                 console.error("Invalid coordinates for zooming.");
             }
 
+
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl =  L.Routing.control({
+                waypoints: [
+                    L.latLng(42.00541940564472, 21.410406238933493), // Current location
+                    L.latLng(parseFloat(latitude), parseFloat(longitude)) // Newly added marker
+                ],
+                router: L.Routing.osrmv1({serviceUrl: 'https://router.project-osrm.org/route/v1'}),
+                lineOptions: {
+                    styles: [{color: 'darkblue', opacity: 0.7, weight: 5}]
+                }
+            }).addTo(map);
+
+
             if (isNaN(latitude) || isNaN(longitude)) {
                 console.error("Invalid coordinates.");
                 return;
             }
 
-            // Create a routing control
-            var control = L.Routing.control({
-                waypoints: [
-                    L.latLng(42.00541940564472, 21.410406238933493),
-                    L.latLng(latitude, longitude)
-                ],
-                routeWhileDragging: true
-            });
-
-            // Add the geocoder control for better waypoint handling
-            var geocoder = L.Control.geocoder({
-                collapsed: false,
-                defaultMarkGeocode: false
-            }).on('markgeocode', function (e) {
-                var bbox = e.geocode.bbox;
-                var padding = [bbox[0][0] - 1, bbox[0][1] - 1];
-                map.fitBounds(L.latLngBounds(bbox), { padding: padding });
-            });
-
-            // Add both controls to the map
-            map.addControl(control);
-            map.addControl(geocoder);
-
-            // Trigger route calculation
-            control.route();
         }
+
 
         function zoomOut() {
-            // Reset map to default view and zoom level
-            map.setView(defaultView, defaultZoom);
+            // Reset map to default view and zoom level with a smooth transition
+            map.flyTo(defaultView, defaultZoom, {
+                duration: 2,  // Adjust the duration (in seconds) for a slower transition
+                easeLinearity: 0.5  // Adjust the easeLinearity for a smoother transition
+            });
         }
+
 
     </script>
 
@@ -316,7 +294,8 @@
 
 
                                         </div>
-                                        <button style="margin-top: 10px; margin-left: 200px; color: lightblue; background: darkred;width:250px;height: 40px;" id="zoomOutButton" onclick="zoomOut()">Zoom Out</button>                                    </div>
+                                        <button style="margin-top: 10px; margin-left: 200px; color: lightblue; background: darkred;width:250px;height: 40px;" id="zoomOutButton" onclick="zoomOut()">Zoom Out</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
