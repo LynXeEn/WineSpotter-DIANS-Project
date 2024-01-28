@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="INTUITIVE">
+    <meta name="description" content="">
+    <title>Home</title>
+    <link rel="stylesheet" href="" th:href="@{/css/nicepage.css}" media="screen">
+    <link rel="stylesheet" href="" th:href="@{/css/Home.css}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <script class="u-script" type="text/javascript" th:src="@{/js/jquery.js}" src="" defer=""></script>
+    <script class="u-script" type="text/javascript" th:src="@{/js/nicepage.js}" src="" defer=""></script>
+    <meta name="generator" content="Nicepage 6.0.3, nicepage.com">
+    <meta name="referrer" content="origin">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Leaflet Routing Machine CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <!-- Leaflet Control Geocoder CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <style>
+        #wineryMap {
+            height: 400px;
+        }
+    </style>
+
+    <script>
+
+        var map;
+        var defaultView = [39.5, 21.7453]; // Default coordinates for Macedonia
+        var defaultZoom = 8;
+        var routingControl;
+
+        function initMap() {
+            // Initialize map centered at default coordinates for Macedonia
+            map = L.map('wineryMap').setView([39.5, 21.7453], 8);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+             var currentLocationMarker = L.marker([42.00541940564472, 21.410406238933493]).addTo(map);
+
+            // Popup for the marker (you can customize the content)
+            currentLocationMarker.bindPopup("Current Location").openPopup();
+
+
+        }
+
+        function addMarker(button) {
+            var latitude = button.getAttribute("data-latitude");
+            var longitude = button.getAttribute("data-longitude");
+            var wineryName = button.getAttribute("data-name");
+
+            var marker = L.marker([parseFloat(latitude), parseFloat(longitude)]).addTo(map);
+
+            var circle = L.circle([parseFloat(latitude), parseFloat(longitude)], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 500
+            }).addTo(map);
+
+            var coordinates = [
+                [parseFloat(latitude), parseFloat(longitude)],
+                // Add more coordinates as needed
+            ];
+
+            var polygon = L.polygon(coordinates).addTo(map);
+
+
+
+            // Zoom to the marker's position with a smooth transition
+            if (map && !isNaN(latitude) && !isNaN(longitude)) {
+                map.setView([parseFloat(latitude) - 0.074, parseFloat(longitude)], 13);
+            } else {
+                console.error("Invalid coordinates for zooming.");
+            }
+
+
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl =  L.Routing.control({
+                waypoints: [
+                    L.latLng(42.00541940564472, 21.410406238933493), // Current location
+                    L.latLng(parseFloat(latitude), parseFloat(longitude)) // Newly added marker
+                ],
+                router: L.Routing.osrmv1({serviceUrl: 'https://router.project-osrm.org/route/v1'}),
+                lineOptions: {
+                    styles: [{color: 'darkblue', opacity: 0.7, weight: 5}]
+                }
+            }).addTo(map);
+
+
+            if (isNaN(latitude) || isNaN(longitude)) {
+                console.error("Invalid coordinates.");
+                return;
+            }
+
+        }
+
+
+        function zoomOut() {
+            // Reset map to default view and zoom level with a smooth transition
+            map.flyTo(defaultView, defaultZoom, {
+                duration: 2,  // Adjust the duration (in seconds) for a slower transition
+                easeLinearity: 0.5  // Adjust the easeLinearity for a smoother transition
+            });
+        }
+
+
+    </script>
+
+
+    <script type="application/ld+json">{
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": "",
+        "logo": "/images/image.png"
+    }</script>
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="Home">
+    <meta property="og:type" content="website">
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+<body onload="initMap()" data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="en">
+<header class="u-border-2 u-border-grey-60 u-clearfix u-custom-color-1 u-header u-header" id="sec-d1d5">
+    <div class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
+        <a href="" class="u-align-left-xs u-image u-logo u-image-1" data-image-width="173" data-image-height="141">
+            <img src="/images/image.png" class="u-logo-image u-logo-image-1">
+        </a>
+        <p class="u-align-center-xs u-custom-font u-font-lobster u-text u-text-default u-text-1">WineSpott​​er</p>
+        <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1">
+            <div class="menu-collapse"
+                 style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
+                <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-decoration u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base"
+                   href="#">
+                    <svg class="u-svg-link" viewBox="0 0 24 24">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#menu-hamburger"></use>
+                    </svg>
+                    <svg class="u-svg-content" version="1.1" id="menu-hamburger" viewBox="0 0 16 16" x="0px" y="0px"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <rect y="1" width="16" height="2"></rect>
+                            <rect y="7" width="16" height="2"></rect>
+                            <rect y="13" width="16" height="2"></rect>
+                        </g>
+                    </svg>
+                </a>
+            </div>
+            <div class="u-custom-menu u-nav-container">
+                <ul class="u-nav u-spacing-2 u-unstyled u-nav-1">
+                    <li class="u-nav-item"><a
+                            class="u-border-2 u-border-active-grey-90 u-border-hover-grey-50 u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
+                            href="/home" style="padding: 10px 20px;">Home</a>
+                    </li>
+                    <li class="u-nav-item"><a
+                            class="u-border-2 u-border-active-grey-90 u-border-hover-grey-50 u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
+                            href="/reviews" style="padding: 10px 20px;">Reviews</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="u-custom-menu u-nav-container-collapse">
+                <div class="u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+                    <div class="u-inner-container-layout u-sidenav-overflow">
+                        <div class="u-menu-close"></div>
+                        <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="Home.html">Home</a></li>
+
+                            <li class="u-nav-item"><a class="u-button-style u-nav-link" href="User.html">Reviews</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+            </div>
+        </nav>
+    </div>
+</header>
+<section class="u-align-center u-border-2 u-border-grey-90 u-clearfix u-gradient u-section-1" id="sec-112f">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <h1 class="u-custom-font u-text u-text-custom-color-8 u-text-default u-text-1">Wel​come!</h1>
+        <h5 class="u-align-center u-custom-font u-font-lato u-text u-text-2">Get ready to find the winery you are
+            looking for!</h5>
+    </div>
+</section>
+<section class="u-clearfix u-image u-section-2" id="sec-8eed" data-image-width="300" data-image-height="300">
+    <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+        <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-100 u-image u-layout-wrap u-image-1"
+             data-image-width="300" data-image-height="300">
+            <div class="u-gutter-0 u-layout">
+                <div class="u-layout-row">
+                    <div class="u-size-26-xl u-size-29-sm u-size-29-xs u-size-30-lg u-size-60-md">
+                        <div class="u-layout-col">
+                            <div class="u-align-left u-container-style u-grey-70 u-layout-cell u-right-cell u-shape-rectangle u-size-40 u-layout-cell-1">
+                                <div class="u-border-3 u-border-grey-90 u-container-layout u-container-layout-1" src="">
+                                    <h2 class="u-align-center u-text u-text-default u-text-1">Search Winery</h2>
+                                    <div class="u-align-center-lg u-align-center-md u-align-center-sm u-align-center-xs u-form u-form-1">
+                                        <form th:action="@{/home}" th:method="POST"
+                                              class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form"
+                                              source="email" name="form" style="padding: 10px;">
+                                            <div class="u-form-email u-form-group">
+                                                <select name="search" class="u-form-email u-form-group" required style="color:black; font-weight: bold;">
+                                                    <option value="name">Search by name</option>
+                                                    <option value="city">Search by city</option>
+                                                </select>
+                                                <label for="email-3ad8" class="u-form-control-hidden u-label"></label>
+                                                <input type="text" placeholder="Enter a winery" id="email-3ad8"
+                                                       name="winery" class="u-input u-input-rectangle" required="">
+                                            </div>
+                                            <div class="u-align-center u-form-group u-form-submit">
+                                                <input type="submit" value="Search"
+                                                       style="background: darkred;width:250px;height: 40px;">
+                                            </div>
+                                            <div th:style="'color:red'" th:if="${hasError}"
+                                                 class="u-form-send-error u-form-send-message" th:text="${error}"></div>
+                                            <input type="hidden" value="" name="recaptchaResponse">
+                                            <input type="hidden" name="formServices"
+                                                   value="7d8bd15a-0996-deaa-4c4b-4d83fcc07b82">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="u-align-left u-container-align-left-xl u-container-style u-layout-cell u-palette-5-light-1 u-right-cell u-size-20 u-layout-cell-2" style="height: 650px;"
+                                 src="">
+                                <div class="u-border-3 u-border-grey-90 winery-container">
+                                    <div class="wineries" th:if="${!hasError}" th:each="winery:${wineries}" >
+                                        <div class="winery" th:attr="data-latitude=${winery.latitude}, data-longitude=${winery.longitude}, data-name=${winery.name}" onclick="addMarker(this)">
+                                            <button class="winery-button">
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-5 color-for-information" th:text="'Name: '+${winery.getName()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-3 color-for-information" th:text="'Address: '+${winery.getAddress() +', '+winery.getCities()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-5 color-for-information" th:text="'Contact: '+${winery.getTelephoneNumbers()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Working Hours: '+${winery.getWorkingHours()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Categories: '+${winery.getCategory()}"></p>
+                                                <a class="addReview" th:href="@{'/reviews/add-form/{id}' (id=${winery.getId()})}">Add review</a>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="wineries" th:each="winery:${wineriesSearch}" >
+                                        <div class="winery" th:attr="data-latitude=${winery.latitude}, data-longitude=${winery.longitude}, data-name=${winery.name}" onclick="addMarker(this)">
+                                            <button class="winery-button">
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-5 color-for-information" th:text="'Name: '+${winery.getName()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-3 color-for-information" th:text="'Address: '+${winery.getAddress() +', '+winery.getCities()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-5 color-for-information" th:text="'Contact: '+${winery.getTelephoneNumbers()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Working Hours: '+${winery.getWorkingHours()}"></p>
+                                                <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-7 color-for-information" th:text="'Categories: '+${winery.getCategory()}"></p>
+                                                <a class="addReview" th:href="@{'/reviews/add-form/{id}' (id=${winery.getId()})}">Add review</a>
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                    <div class="wineries" th:if="${hasError}">
+                                        <div class="winery">
+                                            <p class="u-align-left u-custom-font u-font-georgia u-text u-text-default u-text-5 color-for-information" th:text="${error}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="u-size-30-lg u-size-31-sm u-size-31-xs u-size-34-xl u-size-60-md">
+                        <div class="u-layout-row">
+                            <div class="u-align-left u-container-align-center u-container-style u-image u-image-default u-layout-cell u-left-cell u-size-60 u-image-2"
+                                 src="" data-image-width="300" data-image-height="300">
+                                <div class="u-container-layout u-valign-middle u-container-layout-3" style="margin-top: 251px;height: 80%;padding-bottom: 200px">
+                                    <div class="u-expanded u-grey-light-2 u-map">
+                                        <div class="embed-responsive">
+                                            <div id="wineryMap" style="height: 1500px"></div>
+
+
+                                        </div>
+                                        <button style="margin-top: 10px; margin-left: 200px; color: lightblue; background: darkred;width:250px;height: 40px;" id="zoomOutButton" onclick="zoomOut()">Zoom Out</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<footer class="u-align-center u-border-2 u-border-custom-color-2 u-clearfix u-custom-color-3 u-footer u-footer"
+        id="sec-2b31">
+    <div class="u-clearfix u-sheet u-sheet-1"></div>
+</footer>
+
+</body>
+</html>
